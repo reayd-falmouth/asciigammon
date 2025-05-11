@@ -20,6 +20,7 @@ from pybg.core.sound import SoundManager
 from pybg.gnubg.match import GameState
 from pybg.gnubg.match import Match
 from pybg.gnubg.position import Position
+from pybg.core.events import EVENT_GAME
 
 WIDTH, HEIGHT = 1000, 600
 TITLE_SCREEN = r"""
@@ -48,7 +49,7 @@ class GameShell:
         self.clock = pygame.time.Clock()
         self.manager = pygame_gui.UIManager((WIDTH, HEIGHT))
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-        pygame.display.set_caption("ASCII Backgammon")
+        pygame.display.set_caption("PyBG")
         self.font = pygame.font.Font(
             f"{ASSETS_DIR}/fonts/Ubuntu_Mono/UbuntuMono-Regular.ttf", 16
         )
@@ -76,8 +77,7 @@ class GameShell:
         self.sound_manager = SoundManager()
         self.sound_manager.play_sound("new")
 
-        # History manager
-        # self.history_manager = HistoryManager(self)
+        self.active_module = None  # e.g., 'history' or None
 
     def run(self):
         self.show_title_screen()
@@ -97,6 +97,11 @@ class GameShell:
                 elif event.type == pygame.KEYDOWN:
                     self.handle_keydown(event)
 
+                for module in self.router.modules:
+                    handler = getattr(module, "handle_event", None)
+                    if callable(handler):
+                        handler(event)
+
             now = pygame.time.get_ticks()
             if self.opponent_playing and self.opponent_steps:
                 if now - self.opponent_delay_timer > 1000:  # 0.5s delay
@@ -107,8 +112,10 @@ class GameShell:
                         self.opponent_playing = False
 
             self.draw()
-            self.play_turn()
-            # self.history_manager.save_to_file(f"{ASSETS_DIR}/match_history.json")
+
+            # 🔒 Only play if in game mode
+            if self.active_module == "game":
+                self.play_turn()
 
         pygame.quit()
 
@@ -141,29 +148,6 @@ class GameShell:
         elif event.unicode:
             self.command_buffer += event.unicode
 
-        elif event.key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN):
-            # Prevent navigation if a match is in progress
-            if self.game and self.game.match.game_state not in {
-                GameState.NOT_STARTED,
-                GameState.GAME_OVER,
-            }:
-                self.output_text = self.update_output_text(
-                    "History browsing is only available when no game is in progress."
-                )
-                self.draw()
-                return
-
-            if event.key == pygame.K_LEFT:
-                self.history_manager.previous_match()
-            elif event.key == pygame.K_RIGHT:
-                self.history_manager.next_match()
-            elif event.key == pygame.K_UP:
-                self.history_manager.previous_move()
-            elif event.key == pygame.K_DOWN:
-                self.history_manager.next_move()
-
-            self.load_from_history()
-
     def draw(self):
         self.screen.fill((0, 0, 0))
         y = 10
@@ -185,9 +169,13 @@ class GameShell:
     ):
         move_block = f"\n\n{opponent_move_str}" if opponent_move_str else ""
         header = str(self) if show_board else ""
-        return header + move_block + ("\n\n" + output_message if output_message else "")
+        self.output_text = (
+            header + move_block + ("\n\n" + output_message if output_message else "")
+        )
+        return self.output_text
 
     def run_command(self, command: str, suppress_board: bool = False):
+        # self.active_module = None  # 🔥 Exit any active mode
         output = self.router.handle(command)
         self.output_text = output
         if not suppress_board:
@@ -237,29 +225,6 @@ class GameShell:
                 json.dump(self.settings, f, indent=4)
         except Exception as e:
             logger.error(f"Failed to save settings: {e}")
-
-    def load_from_history(self):
-        pos_id, match_id, message = self.history_manager.get_current_state()
-
-        if not self.game:
-            return  # Avoid decoding into a None game
-
-        self.game.position = Position.decode(pos_id)
-        self.game.match = Match.decode(match_id)
-        self.output_text = self.update_output_text(
-            output_message=message, show_board=True
-        )
-        self.draw()
-
-    def log_current_state(self, message: str = ""):
-        if not hasattr(self, "history_module"):
-            return
-        self.history_module.record_move(
-            match_ref=self.current_match_ref,
-            position_id=self.game.position.encode(),
-            match_id=self.game.match.encode(),
-            message=message,
-        )
 
     def is_viewing_latest_move(self) -> bool:
         ref = self.current_match_ref

@@ -215,6 +215,7 @@ def test_end_turn():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.length = 1
     player = bg.match.player
     bg.end_turn()
@@ -232,6 +233,7 @@ def test_take():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.game_state = GameState.DOUBLED
     bg.match.turn = PlayerType.ONE
     bg.match.player = PlayerType.ONE
@@ -254,6 +256,7 @@ def test_reject():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.player = PlayerType.ZERO
     bg.match.turn = PlayerType.ZERO
     bg.resign(Resign.SINGLE_GAME)
@@ -273,6 +276,7 @@ def test_accept():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.player = PlayerType.ZERO
     bg.match.turn = PlayerType.ZERO
     bg.resign(Resign.SINGLE_GAME)
@@ -292,6 +296,7 @@ def test_double():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.player = PlayerType.ZERO
     bg.match.turn = PlayerType.ZERO
 
@@ -318,6 +323,7 @@ def test_redouble():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.player = PlayerType.ZERO
     bg.match.turn = PlayerType.ZERO
 
@@ -342,6 +348,7 @@ def test_drop():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.match.length = 9
     bg.match.player = PlayerType.ZERO
     bg.match.turn = PlayerType.ZERO
@@ -395,7 +402,7 @@ def test_plays():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
-
+    bg.ref = ""
     bg.match.length = 1
     bg.match.dice = (1, 2)
 
@@ -446,6 +453,7 @@ def test_multiplier():
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
 
     with pytest.raises(
         BoardError,
@@ -600,6 +608,7 @@ def test_set_player_score(capfd, player0, player1):
     bg = Board(
         position_id=BACKGAMMON_STARTING_POSITION_ID,
     )
+    bg.ref = ""
     bg.player0 = Player(PlayerType.ZERO, player0)
     bg.player1 = Player(PlayerType.ONE, player1)
     bg.match.player_0_score = 5
@@ -1090,6 +1099,7 @@ def test_is_opponent_home(capfd, player0, player1):
 def test_checkers_on_bar(capfd, player0, player1):
     position_id = "/wEAAO4/AADAAQ"
     bg = Board(position_id=position_id, match_id="MAAAAAAAAAAA")
+    bg.ref = ""
     board = """ Board           Position ID: /wEAAO4/AADAAQ
                  Match ID   : MAAAAAAAAAAA
  +13-14-15-16-17-18------19-20-21-22-23-24-+     X: player1

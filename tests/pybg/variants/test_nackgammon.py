@@ -15,6 +15,7 @@ pytestmark = pytest.mark.unit
 def test_nackgammon(player0, player1):
     # class Nackgammon
     game = Nackgammon()
+    game.ref = ""
     assert game
 
     game.player0 = Player(PlayerType.ZERO, player0)
@@ -53,6 +54,7 @@ def test_nackgammon(player0, player1):
 def test_nackgammon_generate():
     """Tests the skip function"""
     game = Nackgammon()
+    game.ref = ""
     game.match.player = PlayerType.ZERO
     game.position = Position(
         board_points=(
@@ -581,6 +583,7 @@ def test_nackgammon_set_player_score(capfd, player0, player1):
     """test the set player sore method"""
 
     game = Nackgammon()
+    game.ref = ""
     game.player0 = Player(PlayerType.ZERO, player0)
     game.player1 = Player(PlayerType.ONE, player1)
     game.match.player_0_score = 5

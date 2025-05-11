@@ -210,10 +210,6 @@ class GnubgEvaluator:
                 rBetaHidden = float(params[4])
                 rBetaOutput = float(params[5])
 
-                logger.debug(
-                    cInput, cHidden, cOutput, nTrained, rBetaHidden, rBetaOutput
-                )
-
                 # Load hidden layer weights
                 weights1 = np.zeros((cInput, cHidden), dtype=float)
                 for j in range(cHidden):  # <- flipped outer loop

@@ -15,6 +15,17 @@ from pytest import fixture
 basename = os.path.basename(__file__)
 dirname = os.path.dirname(__file__)
 
+import pygame
+import pytest
+
+
+@pytest.fixture(scope="session", autouse=True)
+def init_pygame():
+    pygame.init()
+    pygame.display.set_mode((1, 1))  # Minimal display to enable event posting
+    yield
+    pygame.quit()
+
 
 class ContextMock(object):
     def __init__(self, environment="test"):

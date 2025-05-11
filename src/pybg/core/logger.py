@@ -5,4 +5,4 @@ from os import getenv
 logger = Logger(service=getenv("POWERTOOLS_SERVICE_NAME", "pybg"))
 
 # Set the log level from the environment variable, default to ERROR if not set
-logger.setLevel(level=getenv("LOG_LEVEL", "ERROR"))
+logger.setLevel(level=getenv("LOG_LEVEL", "DEBUG"))

@@ -581,6 +581,7 @@ def test_set_player_score(capfd, player0, player1):
     """test the set player sore method"""
 
     bg = Backgammon()
+    bg.ref = ""
     bg.player0 = Player(PlayerType.ZERO, player0)
     bg.player1 = Player(PlayerType.ONE, player1)
     bg.match.player_0_score = 5

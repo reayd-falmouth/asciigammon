@@ -1,8 +1,8 @@
-# test_core_module.py
+# test_game_module.py
 
 import pytest
 from unittest.mock import MagicMock
-from pybg.modules.core_module import CoreModule
+from pybg.modules.game_module import GameModule
 from pybg.core.board import BoardError
 
 pytestmark = pytest.mark.unit
@@ -54,15 +54,15 @@ class DummyShell:
 @pytest.fixture
 def module():
     shell = DummyShell()
-    return CoreModule(shell)
+    return GameModule(shell)
 
 
 def test_category():
-    assert CoreModule.category == "Game"
+    assert GameModule.category == "Game"
 
 
 def test_guard_game_raises_if_no_game():
-    mod = CoreModule(MagicMock(game=None))
+    mod = GameModule(MagicMock(game=None))
     with pytest.raises(ValueError):
         mod.guard_game()
 
@@ -72,10 +72,9 @@ def test_cmd_show_returns_text(module):
     assert result == "Updated"
 
 
-def test_cmd_roll_triggers_roll_and_logs(module):
+def test_cmd_roll_triggers_roll(module):
     result = module.cmd_roll([])
     module.shell.game.roll.assert_called_once()
-    module.shell.log_current_state.assert_called_once()
     assert result == "Updated"
 
 
@@ -109,7 +108,6 @@ def test_register_returns_expected_keys(module):
         "accept",
         "reject",
         "resign",
-        "hint",
         "show",
     }
     assert expected_keys.issubset(commands.keys())

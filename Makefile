@@ -62,7 +62,7 @@ TESTS_SOURCE:=tests/
 # Detailed pytest target with coverage and cache clear
 test: ## Run pytest with coverage and clear cache
 	@echo "Running pytest with coverage and cache clear..."
-	@poetry run pytest \
+	@LOG_LEVEL=ERROR poetry run pytest \
 		-vv -s \
 		-m unit \
 		--cache-clear \
