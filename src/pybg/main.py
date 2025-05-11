@@ -113,8 +113,8 @@ class GameShell:
 
             self.draw()
 
-            # 🔒 Only play if not in a special mode (e.g. history browsing)
-            if self.active_module is None:
+            # 🔒 Only play if in game mode
+            if self.active_module == "game":
                 self.play_turn()
 
         pygame.quit()
@@ -175,7 +175,7 @@ class GameShell:
         return self.output_text
 
     def run_command(self, command: str, suppress_board: bool = False):
-        self.active_module = None  # 🔥 Exit any active mode
+        # self.active_module = None  # 🔥 Exit any active mode
         output = self.router.handle(command)
         self.output_text = output
         if not suppress_board:

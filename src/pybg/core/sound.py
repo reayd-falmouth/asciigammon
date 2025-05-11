@@ -97,19 +97,3 @@ class SoundManager:
         if sound:
             logger.debug(f"Playing sound for {action}")
             sound.play()
-
-    # def play_background_music(self):
-    #     self.background_music.play(loops=-1)
-    #
-    # def stop_background_music(self):
-    #     self.background_music.stop()
-    #
-    # def fade_in_music(self, sound, duration=2.0, target_volume=1.0, steps=20):
-    #     current_volume = sound.get_volume()
-    #     step_size = (target_volume - current_volume) / steps
-    #     step_delay = duration / steps
-    #
-    #     for _ in range(steps):
-    #         current_volume += step_size
-    #         sound.set_volume(max(0.0, min(target_volume, current_volume)))
-    #         time.sleep(step_delay)

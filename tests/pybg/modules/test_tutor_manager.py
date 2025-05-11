@@ -27,7 +27,9 @@ def mock_shell():
     shell.active_module = None
 
     # ✅ This handles both: with or without a `msg` positional argument
-    shell.update_output_text.side_effect = lambda *args, **kwargs: args[0] if args else "OK"
+    shell.update_output_text.side_effect = lambda *args, **kwargs: (
+        args[0] if args else "OK"
+    )
 
     return shell
 
@@ -53,43 +55,19 @@ def test_cmd_hint_not_your_turn(tutor):
     assert "not your turn" in result.lower()
 
 
-@pytest.mark.parametrize("state,msg", [
-    (GameState.RESIGNED, "has offered to resign"),
-    (GameState.DOUBLED, "Cube offered"),
-    (GameState.ON_ROLL, "Roll, double or resign"),
-    (GameState.TAKE, "Double accepted"),
-])
+@pytest.mark.parametrize(
+    "state,msg",
+    [
+        (GameState.RESIGNED, "has offered to resign"),
+        (GameState.DOUBLED, "Cube offered"),
+        (GameState.ON_ROLL, "Roll, double or resign"),
+        (GameState.TAKE, "Double accepted"),
+    ],
+)
 def test_cmd_hint_wrong_state_messages(tutor, state, msg):
     tutor.shell.game.match.game_state = state
     result = tutor.cmd_hint([])
     assert msg.lower() in result.lower()
-
-
-# @patch("pybg.modules.tutor_manager.pubeval_x", return_value=0.123)
-# def test_hint_evaluation_and_render(mock_pubeval, tutor):
-#     move = Move(source=0, destination=1)
-#     play = Mock(spec=Play)
-#     play.moves = [move]
-#     play.position.to_array.return_value = [0] * 250
-#     play.position.classify.return_value.name = "RACE"
-#     tutor.shell.game.generate_plays.return_value = [play] * 3
-#
-#     tutor.cmd_hint(["2"])
-#     assert tutor.current_hint_index == 0
-#     assert len(tutor.evaluated_plays) == 2
-#     tutor.shell.update_output_text.assert_called()
-
-
-def test_apply_current_hint(tutor):
-    play = Mock()
-    play.moves = [Mock(source=0, destination=1)]
-    tutor.evaluated_plays = [(0.5, play)]
-    tutor.current_hint_index = 0
-    tutor.original_position = Mock()
-
-    tutor.apply_current_hint()
-    tutor.shell.game.play.assert_called_with([(0, 1)])
-    tutor.shell.update_output_text.assert_called_once()
 
 
 def test_next_previous_hint(tutor):
@@ -119,10 +97,13 @@ def test_handle_event_not_in_tutor_mode(tutor):
     assert result is None
 
 
-@pytest.mark.parametrize("key,expected_index", [
-    (pygame.K_DOWN, 1),
-    (pygame.K_UP, 0),
-])
+@pytest.mark.parametrize(
+    "key,expected_index",
+    [
+        (pygame.K_DOWN, 1),
+        (pygame.K_UP, 0),
+    ],
+)
 def test_handle_arrow_keys_in_hint_mode(key, expected_index, tutor):
     tutor.shell.active_module = "tutor"
     play = Mock()

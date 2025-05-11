@@ -1,8 +1,8 @@
-# test_core_module.py
+# test_game_module.py
 
 import pytest
 from unittest.mock import MagicMock
-from pybg.modules.core_module import CoreModule
+from pybg.modules.game_module import GameModule
 from pybg.core.board import BoardError
 
 pytestmark = pytest.mark.unit
@@ -54,15 +54,15 @@ class DummyShell:
 @pytest.fixture
 def module():
     shell = DummyShell()
-    return CoreModule(shell)
+    return GameModule(shell)
 
 
 def test_category():
-    assert CoreModule.category == "Game"
+    assert GameModule.category == "Game"
 
 
 def test_guard_game_raises_if_no_game():
-    mod = CoreModule(MagicMock(game=None))
+    mod = GameModule(MagicMock(game=None))
     with pytest.raises(ValueError):
         mod.guard_game()
 

@@ -231,7 +231,7 @@ class Board(gym.Env):
             "first_roll",
             match_ref=self.ref,
             game_id=self.encode(),
-            message=f"Player{self.match.turn} wins first roll, with {self.match.dice}",
+            message=f"player{self.match.turn} wins first roll, with {self.match.dice}",
         )
 
         # Diced rolled so game state is set to rolled.
@@ -257,7 +257,7 @@ class Board(gym.Env):
             "roll",
             match_ref=self.ref,
             game_id=self.encode(),
-            message=f"Player{self.match.turn} rolls {self.match.dice}",
+            message=f"player{self.match.turn} rolls {self.match.dice}",
         )
 
         return self.match.dice
@@ -304,7 +304,7 @@ class Board(gym.Env):
                 "move",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} has no legal moves from dice {self.match.dice}",
+                message=f"player{self.match.turn} has no legal moves from dice {self.match.dice}",
             )
             self.end_turn()
             return
@@ -343,7 +343,7 @@ class Board(gym.Env):
                     f"{'bar' if m.source == -1 else m.source + 1}/{'off' if m.destination == -1 else m.destination + 1}"
                     for m in matching_play.moves
                 )
-                message = f"Player{self.match.turn} moved {formatted_moves}"
+                message = f"player{self.match.turn} moved {formatted_moves}"
                 post_game_event(
                     "move", match_ref=self.ref, game_id=self.encode(), message=message
                 )
@@ -369,7 +369,7 @@ class Board(gym.Env):
                 "double",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} doubles to {self.match.cube_value}",
+                message=f"player{self.match.turn} doubles to {self.match.cube_value}",
             )
             self.match.swap_turn()
         else:
@@ -396,7 +396,7 @@ class Board(gym.Env):
                 "redouble",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} redoubles to {self.match.cube_value}",
+                message=f"player{self.match.turn} redoubles to {self.match.cube_value}",
             )
         else:
             raise BoardError("Cannot redouble: it's not your turn")
@@ -416,7 +416,7 @@ class Board(gym.Env):
                 "drop",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} drops the cube at value {self.match.cube_value}",
+                message=f"player{self.match.turn} drops the cube at value {self.match.cube_value}",
             )
             self.update_score(
                 int(self.match.cube_value / 2),
@@ -442,7 +442,7 @@ class Board(gym.Env):
                 "accept",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} accepts the cube at value {self.match.cube_value}",
+                message=f"player{self.match.turn} accepts the cube at value {self.match.cube_value}",
             )
             self.update_score(
                 int(self.match.cube_value),
@@ -471,7 +471,7 @@ class Board(gym.Env):
                 "reject",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} rejects {self.match.resign}",
+                message=f"player{self.match.turn} rejects {self.match.resign}",
             )
         else:
             raise BoardError("No resignation to reject")
@@ -495,7 +495,7 @@ class Board(gym.Env):
                 "take",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} takes the cube at {self.match.cube_value}",
+                message=f"player{self.match.turn} takes the cube at {self.match.cube_value}",
             )
             self.match.swap_turn()
 
@@ -533,7 +533,7 @@ class Board(gym.Env):
                 "resign",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.turn} resigns a {self.match.resign}",
+                message=f"player{self.match.turn} resigns a {self.match.resign}",
             )
             self.position = self.position.swap_players()
             self.match.swap_players()
@@ -555,7 +555,7 @@ class Board(gym.Env):
                 "end_game",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.player} wins with {self.match.player_0_score} points",
+                message=f"player{self.match.player} wins with {self.match.player_0_score} points",
             )
         elif self.match.player_1_score >= self.match.length:
             self.match.game_state = GameState.GAME_OVER
@@ -563,7 +563,7 @@ class Board(gym.Env):
                 "end_game",
                 match_ref=self.ref,
                 game_id=self.encode(),
-                message=f"Player{self.match.player} wins with {self.match.player_1_score} points",
+                message=f"player{self.match.player} wins with {self.match.player_1_score} points",
             )
         else:
             self.reset()
@@ -581,8 +581,6 @@ class Board(gym.Env):
             self.match.player_0_score += score
         else:
             self.match.player_1_score += score
-
-        logger.debug(f"Player {winner} wins {score} points")
 
     def multiplier(self) -> Resign:
         """

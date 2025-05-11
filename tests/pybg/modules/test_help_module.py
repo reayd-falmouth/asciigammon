@@ -40,4 +40,4 @@ def test_register_returns_expected_commands(help_module):
     commands, _, descriptions = help_module.register()
     assert set(commands.keys()) == {"help", "exit", "quit"}
     assert "Show the help menu" in descriptions["help"]
-    assert "Exit the application" in descriptions["exit"]
+    assert "Exits the current mode." in descriptions["exit"]

@@ -95,7 +95,7 @@ class TutorManager(BaseModule):
         if self.original_position:
             self.shell.game.position = deepcopy(self.original_position)
 
-        lines = ["HINTS (use Up/Down keys to navigate):\n"]
+        lines = ["HINTS (use Up/Down keys to navigate, ESC to exit):\n"]
         for i, (score, play) in enumerate(self.evaluated_plays):
             moves_str = " ".join(
                 f"{m.source + 1}/{m.destination + 1}" for m in play.moves
@@ -108,15 +108,6 @@ class TutorManager(BaseModule):
         play: Play = self.evaluated_plays[self.current_hint_index][1]
         self.shell.game.position = play.position
         return self.shell.update_output_text("\n".join(lines), show_board=True)
-
-    def apply_current_hint(self):
-        if not self.evaluated_plays:
-            return self.shell.update_output_text("No hint to apply.", show_board=True)
-
-        score, play = self.evaluated_plays[self.current_hint_index]
-        self.shell.game.play([(m.source, m.destination) for m in play.moves])
-        self.shell.active_module = None
-        return self.shell.update_output_text(show_board=True)
 
     def next_hint(self):
         if not self.evaluated_plays:
@@ -151,8 +142,6 @@ class TutorManager(BaseModule):
                 return self.previous_hint()
             elif event.key == pygame.K_DOWN:
                 return self.next_hint()
-            # elif event.key == pygame.K_RETURN:
-            #     return self.apply_current_hint()
             elif event.key == pygame.K_ESCAPE:
                 return self.exit_hint_mode()
 
@@ -168,15 +157,25 @@ class TutorManager(BaseModule):
             f"Tutor mode set to: {self.tutor_mode}", show_board=False
         )
 
+    def cmd_play(self, args):
+        if not self.evaluated_plays:
+            return self.shell.update_output_text("No hint to apply.", show_board=True)
+
+        self.shell.active_module = "game"
+        self.shell.game.end_turn()
+        return self.shell.update_output_text(show_board=True)
+
     def register(self):
         return (
             {
                 "hint": self.cmd_hint,
+                "play": self.cmd_play,
                 "tutor_mode": self.cmd_tutor_mode,
             },
             {},
             {
                 "hint": "Enter interactive hint browsing mode",
+                "play": "Plays the currently selected move",
                 "tutor_mode": "Set hint mode: regular, tutor, training, competition",
             },
         )

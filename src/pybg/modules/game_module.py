@@ -1,18 +1,16 @@
 import traceback
 from typing import Tuple
 
-from pybg.gnubg.pub_eval import pubeval_x
 from pybg.agents.factory import create_agent
 from pybg.core.board import BoardError
 from pybg.core.logger import logger
-from pybg.gnubg.match import GameState
-from pybg.gnubg.match import Resign
 from pybg.core.player import PlayerType
+from pybg.gnubg.match import Resign
 from pybg.modules.base_module import BaseModule
 from pybg.variants import AceyDeucey, Backgammon, Hypergammon, Nackgammon
 
 
-class CoreModule(BaseModule):
+class GameModule(BaseModule):
     category = "Game"
 
     def __init__(self, shell):
@@ -21,6 +19,8 @@ class CoreModule(BaseModule):
     def guard_game(self):
         if not self.shell.game:
             raise ValueError("Start a game first with 'new'.")
+        else:
+            self.shell.active_module = "game"
 
     def parse_moves(self, move_args) -> Tuple[Tuple[int, int], ...]:
         if not move_args:
@@ -52,9 +52,8 @@ class CoreModule(BaseModule):
         ]
 
         if tuple(moves) not in legal_move_sets:
-            hint = self.cmd_hint()
             raise BoardError(
-                f"Illegal move sequence: {' '.join(move_args)}\n\nLegal moves:\n{hint}"
+                f"Illegal move sequence: {' '.join(move_args)}\n\nLegal moves:\n"
             )
 
         return tuple(moves)
@@ -83,6 +82,7 @@ class CoreModule(BaseModule):
             s.settings["opponent_agent"], PlayerType.ONE, s.game
         )
         s.sound_manager.play_sound("roll")
+        s.active_module = "game"
         return s.update_output_text(show_board=True)
 
     def cmd_debug(self, args):
@@ -184,7 +184,6 @@ class CoreModule(BaseModule):
                 "accept": self.cmd_accept,
                 "reject": self.cmd_reject,
                 "resign": self.cmd_resign,
-                # "hint": self.cmd_hint,
                 "show": self.cmd_show,
             },
             {},
@@ -199,11 +198,10 @@ class CoreModule(BaseModule):
                 "reject": "Rejects a resignation",
                 "resign": "Resign (single, gammon, backgammon)",
                 "debug": "Debug current game state",
-                # "hint": "Show your legal moves or advice",
                 "show": "Prints the board to screen",
             },
         )
 
 
 def register(shell):
-    return CoreModule(shell)
+    return GameModule(shell)
