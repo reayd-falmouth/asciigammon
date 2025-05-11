@@ -51,7 +51,12 @@ class TutorManager(BaseModule):
 
     def cmd_hint(self, args):
         s = self.shell
+
+        if not s.game:
+            return "There is no game started. Type `new` to start a game."
+
         s.active_module = "tutor"
+
         self.original_position = deepcopy(self.shell.game.position)
 
         # Check if user typed a number after "hint"
@@ -61,13 +66,8 @@ class TutorManager(BaseModule):
             else s.settings.get("hint_top_n", 5)
         )
 
-        if not s.game:
-            return "There is no game started. Type `new` to start a game."
         if s.game.match.player != s.game.player.player_type:
             message = "It's not your turn!"
-            return self.shell.update_output_text(message, show_board=True)
-        if s.game.match.game_state != GameState.ROLLED:
-            message = "Roll, double or resign?"
             return self.shell.update_output_text(message, show_board=True)
         if s.game.match.game_state == GameState.RESIGNED:
             message = f"Your opponent has offered to resign a {s.game.match.resign.phrase}, accept or reject?"
