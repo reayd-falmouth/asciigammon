@@ -51,13 +51,13 @@ class HistoryManager(BaseModule):
             return ""
         return self.match_refs[self.current_match_index]
 
-    def get_current_state(self) -> tuple[list[str], str]:
-        match_ref = self.get_current_match_ref()
-        entry = self.matches.get(match_ref)
-        if not entry or not entry["moves"]:
-            return "", "", ""
-        move = entry["moves"][self.current_move_index]
-        return move["game_id"].split(":"), move["message"]
+    # def get_current_state(self) -> tuple[list[str], str]:
+    #     match_ref = self.get_current_match_ref()
+    #     entry = self.matches.get(match_ref)
+    #     if not entry or not entry["moves"]:
+    #         return [""], ""
+    #     move = entry["moves"][self.current_move_index]
+    #     return move["game_id"].split(":"), move["message"]
 
     def update_view_to_current_move(self):
         match_ref = self.get_current_match_ref()
