@@ -50,7 +50,7 @@ run_cartoon_board:
 
 run:
 	@echo "Running game..."
-	@python -m src.asciigammon.main
+	@python -m src.pybg.main
 
 black:
 	@echo "Formatting with black..."

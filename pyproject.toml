@@ -18,11 +18,12 @@ stable-baselines3 = "^2.6.0"
 gymnasium = "^1.1.1"
 sb3-contrib = "^2.6.0"
 numpy = "*"
-torch = "2.3.0"
+torch = "*"
 matplotlib = "^3.10.1"
 aws-lambda-powertools = "^3.10.0"
 pyglet = "^2.1.6"
 requests = "^2.32.3"
+gnubg = "1.1.0a1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
@@ -31,11 +32,21 @@ pyinstaller = "^6.12.0"
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
 tensorboard = "^2.19.0"
+setuptools = "*"
+
+[[tool.poetry.source]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+priority = "explicit"
+
+[[tool.poetry.source]]
+name = "pypi"
+priority = "primary"
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
 
 
 
